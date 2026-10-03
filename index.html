@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Checker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Domain Checker for Pakistani Business </h1>
+    <form id="domainForm">
+        <label for="domainInput">Enter a business name to check domain:</label>
+        <input type="text" id="domainInput" name="domain" required>
+        <button type="submit">Check</button>
+    </form>
+    <div id="result">
+        <p id="loading"></p>
+    </div>
+    <div id="alternatives"></div>
+    <p class="dns-note">
+        Availability is based on DNS resolution and is a strong signal, not a guarantee.
+        Confirm with a registrar before registering a domain.
+    </p>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
