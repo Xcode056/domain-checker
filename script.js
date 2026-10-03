@@ -91,17 +91,6 @@ form.addEventListener('submit', async (event) => {
         resultContainer.appendChild(resultItem);
     });
 
-    // console.log(results);
-
-    // for (const currentDomain of domains) {
-    //     const isAvailable = await checkDomainAvailability(currentDomain);
-    //     // displayResult(currentDomain, isAvailable);
-    //     console.log(`${currentDomain}:`, isAvailable);
-    // }
-    // if (domain) {
-    //     const isAvailable = await checkDomainAvailability(domain);
-    //     displayResult(domain, isAvailable);
-    // }
 });
 
 async function checkDomainAvailability(domain) {
@@ -168,16 +157,3 @@ async function findAvailableAlternatives(name) {
         return results[index] === true;
     });
 }
-
-// function displayResult(domain, isAvailable) {
-//     resultContainer.innerHTML = '';
-//     const resultMessage = document.createElement('p');
-//     if (isAvailable) {
-//         resultMessage.textContent = `The domain "${domain}" is available!`;
-//         resultMessage.style.color = 'green';
-//     } else {
-//         resultMessage.textContent = `The domain "${domain}" is not available.`;
-//         resultMessage.style.color = 'red';
-//     }
-//     resultContainer.appendChild(resultMessage);
-// }
