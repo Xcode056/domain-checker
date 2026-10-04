@@ -22,74 +22,117 @@ function cleanDomainInput(value) {
 }
 
 form.addEventListener('submit', async (event) => {
+
     event.preventDefault();
+
     checkButton.disabled = true;
     checkButton.textContent = "Checking...";
-    const domain = cleanDomainInput(input.value);
 
+    try {
 
-    const domains = [
-        `${domain}.com`,
-        `${domain}.pk`,
-        `${domain}.com.pk`
-    ];
+        const domain = cleanDomainInput(input.value);
 
-    // check each domain and  give results
-    resultContainer.innerHTML = "";
-    resultContainer.textContent = "Checking...";
-    const promises = domains.map((currentDomain) => {
-        return checkDomainAvailability(currentDomain);
-    });
+        const domains = [
+            `${domain}.com`,
+            `${domain}.pk`,
+            `${domain}.com.pk`
+        ];
 
-    const results = await Promise.all(promises);
+        // Clear previous results
+        resultContainer.innerHTML = "";
+        alternativesContainer.innerHTML = "";
 
+        // Show loading message
+        resultContainer.textContent = "Checking...";
 
+        // Check all three domains
+        const promises = domains.map((currentDomain) => {
+            return checkDomainAvailability(currentDomain);
+        });
 
-    if (results[0] === false) {
+        const results = await Promise.all(promises);
 
-        const availableAlternatives = await findAvailableAlternatives(domain);
+        // Clear loading message
+        resultContainer.innerHTML = "";
 
-        const suggestions = availableAlternatives.slice(0, 5);
+        // Display domain results
+        domains.forEach((currentDomain, index) => {
 
-        if (suggestions.length > 0) {
+            const resultItem = document.createElement("p");
 
-            alternativesContainer.innerHTML =
-                "<h3>Available alternatives:</h3>";
+            if (results[index] === true) {
 
-            suggestions.forEach((alternative) => {
-                const item = document.createElement("p");
+                resultItem.textContent =
+                    `${currentDomain} - Available`;
 
-                item.textContent = alternative;
+                resultItem.style.color = "green";
 
-                alternativesContainer.appendChild(item);
-            });
+            } else if (results[index] === false) {
+
+                resultItem.textContent =
+                    `${currentDomain} - Taken`;
+
+                resultItem.style.color = "red";
+
+            } else {
+
+                resultItem.textContent =
+                    `${currentDomain} - Could not check right now`;
+
+                resultItem.style.color = "orange";
+            }
+
+            resultContainer.appendChild(resultItem);
+        });
+
+        // Check alternatives if .com is taken
+        if (results[0] === false) {
+
+            const availableAlternatives =
+                await findAvailableAlternatives(domain);
+
+            const suggestions =
+                availableAlternatives.slice(0, 5);
+
+            if (suggestions.length > 0) {
+
+                alternativesContainer.innerHTML =
+                    "<h3>Available alternatives:</h3>";
+
+                suggestions.forEach((alternative) => {
+
+                    const item =
+                        document.createElement("p");
+
+                    item.textContent = alternative;
+
+                    alternativesContainer.appendChild(item);
+                });
+            }
         }
+
+    } catch (error) {
+
+        console.error(error);
+
+        resultContainer.innerHTML = "";
+
+        const errorMessage =
+            document.createElement("p");
+
+        errorMessage.textContent =
+            "Something went wrong. Please try again.";
+
+        errorMessage.style.color = "orange";
+
+        resultContainer.appendChild(errorMessage);
+
+    } finally {
+
+        // Always enable the button again
+        checkButton.disabled = false;
+        checkButton.textContent = "Check";
     }
-
-    checkButton.disabled = false;
-    checkButton.textContent = "Check";
-
-
-    resultContainer.innerHTML = "";
-
-    domains.forEach((currentDomain, index) => {
-        const resultItem = document.createElement("p");
-
-        if (results[index] === true) {
-            resultItem.textContent = `${currentDomain} - Available`;
-            resultItem.style.color = "green";
-        } else if (results[index] === false) {
-            resultItem.textContent = `${currentDomain} - Taken`;
-            resultItem.style.color = "red";
-        }
-        else {
-            resultItem.textContent =
-                `${currentDomain} - Could not check right now`;
-            resultItem.style.color = "orange";
-        }
-
-        resultContainer.appendChild(resultItem);
-    });
 
 });
 
@@ -115,10 +158,6 @@ async function checkDomainAvailability(domain) {
     } catch (error) {
         console.error('Error checking domain availability:', error);
         return null;
-    }
-    finally {
-        checkButton.disabled = false;
-        checkButton.textContent = "Check";
     }
 
 }
